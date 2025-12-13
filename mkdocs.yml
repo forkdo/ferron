@@ -1,5 +1,6 @@
 site_name: Ferron 中文文档
 docs_dir: docs_zh
+custom_domain: ferron.ooos.top
 site_author: Jetsung Chan
 edit_uri: edit/docs/docs_zh
 copyright: Copyright &copy; 2025 Jetsung Chan
