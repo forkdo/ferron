@@ -49,7 +49,7 @@ export GEMINI_API_KEY=
 echo 'GEMINI_API_KEY=' > .env
 ```
 
-3. 
+3. AI 翻译
 ```bash
 将 @docs 里面的英文文档翻译成中文，并且保存至 @docs_zh 文件夹里。
 ```
