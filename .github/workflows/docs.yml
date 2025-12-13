@@ -1,14 +1,15 @@
-name: 构建文档
+name: Docs
 
 on:
   push:
     branches:
-      - main
-      - dev
+      - docs
     paths:
       - 'docs_zh/**'
       - 'mkdocs.yml'
       - '.github/workflows/docs.yml'
+
+  workflow_dispatch:
 
 permissions:
   contents: write
