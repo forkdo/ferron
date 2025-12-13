@@ -18,7 +18,7 @@ else
 fi
 
 main() {
-
+    DEFAULT_BRANCH="develop-2.x"
 }
 
 main "$@"

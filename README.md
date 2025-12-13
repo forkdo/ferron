@@ -1,3 +1,51 @@
 # Ferron 中文文档
 
 本文档使用 AI 翻译
+
+## 项目流程
+
+### 1. 拉取上游文档
+1. 创建空分支
+```bash
+git switch --orphan docs
+```
+
+2. 创建 `README.md`
+```bash
+cat > README.md <<EOF
+# 中文文档
+
+本文档使用 AI 翻译
+EOF
+```
+
+3. 首次提交
+```bash
+git add .
+git commit -am init
+git push origin docs
+```
+
+4. 设置上游仓库
+```bash
+git remote add upstream https://github.com/ferronweb/ferron.git
+git fetch upstream develop-2.x
+git checkout upstream/develop-2.x -- docs
+```
+
+### 2. 安装 AI 助手
+1. 安装 CLI 工具
+```bash
+npm install -g npm
+npm install -g @google/gemini-cli
+```
+
+2. 设置环境变量
+```bash
+export GEMINI_API_KEY=
+```
+
+3. 
+```bash
+ 将 docs 里面的英文文档翻译成英文，并且保存至 docs_zh 文件夹里。
+```
