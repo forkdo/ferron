@@ -42,10 +42,22 @@ npm install -g @google/gemini-cli
 
 2. 设置环境变量
 ```bash
+# 通过环境变量方式设置
 export GEMINI_API_KEY=
+
+# 通过 .env 文件配置
+echo 'GEMINI_API_KEY=' > .env
 ```
 
 3. 
 ```bash
- 将 docs 里面的英文文档翻译成英文，并且保存至 docs_zh 文件夹里。
+将 @docs 里面的英文文档翻译成中文，并且保存至 @docs_zh 文件夹里。
+```
+
+```bash
+gemini --yolo --model "gemini-2.5-flash-lite" "将 @docs 里面的英文文档翻译成中文，并且保存至 @docs_zh 文件夹里。"
+```
+
+```bash
+gemini --yolo --model "gemini-2.5-flash-lite" "推理过程使用中文输出。将 @docs 里面的英文文档翻译成中文，并且保存至 @docs_zh 文件夹里。"
 ```
