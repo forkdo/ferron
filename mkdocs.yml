@@ -8,6 +8,7 @@ theme:
   name: material
   navigation:
     expand: true
+    sections: true
 
 nav:
     - 首页: index.md
