@@ -61,3 +61,9 @@ gemini --yolo --model "gemini-2.5-flash-lite" "将 @docs 里面的英文文档�
 ```bash
 gemini --yolo --model "gemini-2.5-flash-lite" "推理过程使用中文输出。将 @docs 里面的英文文档翻译成中文，并且保存至 @docs_zh 文件夹里。"
 ```
+
+## 文档管理器
+- 安装 [Zensical](https://github.com/zensical/zensical)
+```bash
+pip install zensical
+```

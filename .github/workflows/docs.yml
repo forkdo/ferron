@@ -1,4 +1,4 @@
-name: Docs
+name: Documentation
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - docs
     paths:
       - 'docs_zh/**'
-      - 'mkdocs.yml'
+      - 'zensical.toml'
       - '.github/workflows/docs.yml'
 
   workflow_dispatch:
@@ -17,31 +17,41 @@ permissions:
   id-token: write
 
 jobs:
-  documentation:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/configure-pages@v5
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: 配置 Git 凭据
-        run: |
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-
       - uses: actions/setup-python@v6
         with:
           python-version: 3.x
+      - run: pip install zensical
+      - run: zensical build --clean
 
-      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
-
-      - uses: actions/cache@v5
+      ### SSH Server WEB
+      - name: Set up SSH
+        uses: LuisEnMarroquin/setup-ssh-action@v3.0.0
         with:
-          key: mkdocs-material-${{ env.cache_id }}
-          path: .cache
-          restore-keys: |
-            mkdocs-material-
+          ORIGIN: ${{ secrets.SSH_HOSTNAME }}
+          SSHKEY: ${{ secrets.SSH_KEY }}
+          NAME: webserver
+          PORT: ${{ secrets.SSH_PORT }}
+          USER: ${{ secrets.SSH_USERNAME }}
+      - run: echo "" >> ~/.ssh/access  # fix
+      - name: Deploy the website
+        env: 
+          WEBROOT: /data/wwwroot/ferron
+        run: |
+          ssh webserver "rm -rf $WEBROOT && mkdir -p $WEBROOT"
+          scp -r site/* webserver:${WEBROOT}
 
-      - run: pip install -r requirements.txt
-
-      - run: mkdocs gh-deploy --force
+      ### GitHub Pages
+      - run: cp CNAME site/
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+      - uses: actions/deploy-pages@v4
+        id: deployment
