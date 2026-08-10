@@ -1,6 +1,9 @@
 ---
 title: 通过安装程序安装（GNU/Linux）
+description: "使用安装脚本在 GNU/Linux 上安装 Ferron。包含命令、默认路径、更新、从 1.x 升级以及服务管理。"
 ---
+
+Ferron 可以使用安装脚本安装在 GNU/Linux 系统上。本指南将引导您完成安装过程。
 
 ## 安装步骤
 
@@ -12,11 +15,13 @@ title: 通过安装程序安装（GNU/Linux）
 sudo bash -c "$(curl -fsSL https://get.ferron.sh/v2)"
 ```
 
-系统会提示您选择安装类型，并可能询问是否安装包含 `unzip` 和 `setcap` 的软件包。
+系统会提示您选择安装类型。如果提供了软件包，可能还会提示您是否使用包管理器安装 Ferron。
 
 ### 2. 访问网络服务器
 
-默认情况下，Ferron 会从 `/var/www/ferron` 目录提供内容。打开网页浏览器并导航至 `http://localhost`，以验证服务器是否正在运行并提供默认的 `index.html` 文件。
+默认情况下，Ferron 会从 `/var/www/ferron` 目录提供内容。打开网页浏览器并导航至 `http://localhost`，以检查服务器是否正在运行并提供默认的 `index.html` 文件。
+
+如果您在页面上看到 "Ferron is installed successfully!"（Ferron 安装成功！）消息，说明 Web 服务器已成功安装并正在运行。
 
 ## 文件结构
 
@@ -24,6 +29,7 @@ sudo bash -c "$(curl -fsSL https://get.ferron.sh/v2)"
 
 - _/usr/sbin/ferron_ - Ferron 网络服务器
 - _/usr/sbin/ferron-passwd_ - Ferron 用户密码生成工具
+- _/usr/sbin/ferron-precompress_ - Ferron 静态文件预压缩工具
 - _/usr/sbin/ferron-yaml2kdl_ - Ferron 配置转换工具
 - _/var/log/ferron/access.log_ - Ferron 访问日志（Combined Log Format）
 - _/var/log/ferron/error.log_ - Ferron 错误日志

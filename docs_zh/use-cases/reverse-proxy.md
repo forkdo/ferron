@@ -1,5 +1,6 @@
 ---
 title: 反向代理
+description: "将 Ferron 配置为反向代理，支持 WebSocket、可选的静态/SPA 托管、多个位置以及预压缩资源。"
 ---
 
 将 Ferron 配置为反向代理非常简单 - 您只需在 `proxy` 指令中指定后端服务器 URL。要将 Ferron 配置为反向代理，您可以使用以下配置：
@@ -10,6 +11,8 @@ example.com {
     proxy "http://localhost:3000/" // 将“http://localhost:3000”替换为后端服务器 URL
 }
 ```
+
+在此配置示例中，WebSocket 协议开箱即用地受到支持——无需额外配置。
 
 ## 支持静态文件服务的反向代理
 
@@ -91,18 +94,18 @@ example.com {
 }
 ```
 
-## 使用完整“Host”标头的反向代理
+## 使用完整“Host”标头的 HTTPS 反向代理
 
-Ferron 默认情况下会在将请求发送到后端服务器之前重写“Host”标头，并将原始“Host”标头值保留在“X-Forwarded-Host”标头中。
+Ferron 默认情况下会在将请求发送到后端服务器之前重写“Host”标头（如果后端服务器使用 HTTPS 协议），并将原始“Host”标头值保留在“X-Forwarded-Host”标头中。
 
 但是，有些 Web 应用程序可能无法使用此配置。这可能导致主机标头不匹配错误和其他问题。
 
 在这种情况下，您可以将“Host”标头值设置为原始值：
 
 ```kdl
-// 使用完整“Host”标头的反向代理示例配置。将“example.com”替换为您的域名。
+// 使用完整“Host”标头的 HTTPS 反向代理示例配置。将“example.com”替换为您的域名。
 example.com {
-    proxy "http://localhost:3000/" // 将“http://localhost:3000”替换为后端服务器 URL
+    proxy "https://localhost:8443/" // 将“https://localhost:8443”替换为后端服务器 URL
     proxy_request_header_replace "Host" "{header:Host}"
 }
 ```
@@ -127,6 +130,17 @@ Ferron 支持反向代理到接受通过 HTTPS 或具有先验知识的纯文本
 grpc.example.com {
     proxy "http://localhost:3000/" // 将“http://localhost:3000”替换为后端服务器 URL
     proxy_http2_only // 启用仅 HTTP/2 代理以支持 gRPC 代理
+}
+```
+
+## 反向代理到动态后端（通过 SRV 记录）
+
+Ferron 支持通过 SRV 记录反向代理到动态后端。要为反向代理到动态后端配置 Ferron，您可以使用此配置：
+
+```kdl
+// 反向代理到动态后端的示例配置。将“example.com”替换为您的域名。
+example.com {
+    proxy_srv "http://_backend._tcp.example.com/" // 将“_backend._tcp.example.com”替换为您的后端服务器的实际 SRV 记录
 }
 ```
 
@@ -169,3 +183,13 @@ bar.example.com {
 ```
 
 对于 `http://calender.example.net:5000/agenda/example`，您可能需要配置日历服务以删除“agenda/”或在 Ferron 中配置 URL 重写。
+
+## 注意事项与故障排查
+
+- 如果遇到 `502 Bad Gateway` 或 `504 Gateway Timeout`，请检查后端 URL/端口，确保后端进程正在运行，并确认 Ferron 到后端的网络/防火墙访问正常。
+- 如果只有部分路径失败，请检查 `location` 匹配顺序和 `remove_base` 行为，以确保转发的路径与后端期望的一致。
+- 如果您的后端应用程序报告主机不匹配错误或错误的绝对 URL，请使用 `proxy_request_header_replace "Host" "{header:Host}"`（参见完整 Host 标头部分）。
+- 如果后端返回意外的 `404 Not Found`，请分别在有/无 `disable_url_sanitizer` 的情况下进行测试，并在禁用 URL 清理前确认后端路径处理方式。
+- 对于静态 + API 混合设置，请将 API 路由放在类似 `/api` 的专用前缀中，并使用捕获所有 `/` 位置提供静态文件或 SPA 回退。
+- 对于 gRPC 上游，请启用 `proxy_http2_only`；如果没有仅 HTTP/2 代理，许多 gRPC 后端会失败。
+- 如果 Ferron 位于终止 HTTPS 的代理之后，且您还使用了自动 TLS，请使用 HTTP-01 质询而非 TLS-ALPN-01。请参阅 [自动 TLS](/docs/use-cases/automatic-tls#note-about-cloudflare-proxies-and-other-https-proxies)。

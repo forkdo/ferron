@@ -1,0 +1,180 @@
+---
+title: Logging & observability
+description: "Practical Ferron setups for access/error logs, container-friendly std streams, and OTLP export for centralized observability."
+---
+
+Ferron supports multiple observability outputs, so you can start with local log files and later move to centralized telemetry without changing your application stack.
+
+This page focuses on common deployment patterns. For directive-level details, see [Configuration: observability & logging](/docs/configuration/observability-logging) and [Observability backends reference](/docs/reference/observability).
+
+## Basic production logs to files
+
+Use this when running Ferron directly on a VM or bare metal and collecting logs from disk.
+
+```kdl
+globals {
+    log_date_format "%d/%b/%Y:%H:%M:%S %z"
+    log_format "{client_ip} - {auth_user} [{timestamp}] \"{method} {path_and_query} {version}\" {status_code} {content_length} \"{header:Referer}\" \"{header:User-Agent}\""
+}
+
+example.com {
+    log "/var/log/ferron/example.com.access.log"
+    error_log "/var/log/ferron/example.com.error.log"
+}
+```
+
+## JSON-format access logs
+
+Use this when you need structured logs for easier parsing by log aggregation tools (for example, ELK Stack, Splunk, or cloud-native log processors).
+
+`log_json` directive is available in Ferron 2.7.0 or newer.
+
+```kdl
+globals {
+    log_date_format "%d/%b/%Y:%H:%M:%S %z"
+    log_json
+}
+
+example.com {
+    log "/var/log/ferron/example.com.access.log"
+    error_log "/var/log/ferron/example.com.error.log"
+}
+```
+
+This produces JSON objects with the following default fields: `timestamp`, `client_ip`, `auth_user`, `method`, `path_and_query`, `version`, `status_code`, `content_length`, `referer`, and `user_agent`. When `log_json` is set, `log_format` is ignored, while `log_date_format` still controls the `timestamp` field format.
+
+You can also add custom properties using placeholders:
+
+```kdl
+globals {
+    log_date_format "%d/%b/%Y:%H:%M:%S %z"
+    log_json request_id="{header:X-Request-Id}" request_target="{method} {path_and_query}"
+}
+
+example.com {
+    log "/var/log/ferron/example.com.access.log"
+    error_log "/var/log/ferron/example.com.error.log"
+}
+```
+
+## Container-friendly logging to stdout/stderr
+
+Use this when running Ferron in containers (Docker, Kubernetes), where platform log collectors read process streams.
+
+`stdlog` directives are available in Ferron 2.5.0 and newer.
+
+```kdl
+example.com {
+    // Access logs to stdout
+    log_stdout
+
+    // Error logs to stderr
+    error_log_stderr
+}
+```
+
+If your platform expects everything on one stream, you can use `log_stderr` and `error_log_stderr`, or `log_stdout` and `error_log_stdout`.
+
+## Centralized observability with OTLP
+
+Use this when shipping logs, metrics, and traces to an OpenTelemetry collector.
+
+OTLP directives are available in Ferron 2.2.0 and newer.
+
+```kdl
+globals {
+    otlp_service_name "ferron-prod"
+
+    otlp_logs "http://otel-collector.internal:4317/v1/logs" protocol="grpc"
+    otlp_metrics "http://otel-collector.internal:4317/v1/metrics" protocol="grpc"
+    otlp_traces "http://otel-collector.internal:4317/v1/traces" protocol="grpc"
+}
+```
+
+If you use HTTP OTLP endpoints, set `protocol="http/protobuf"` (or `"http/json"`) and optionally an auth header:
+
+```kdl
+globals {
+    otlp_logs "https://otel.example.net/v1/logs" protocol="http/protobuf" authorization="Bearer YOUR_TOKEN"
+    otlp_metrics "https://otel.example.net/v1/metrics" protocol="http/protobuf" authorization="Bearer YOUR_TOKEN"
+    otlp_traces "https://otel.example.net/v1/traces" protocol="http/protobuf" authorization="Bearer YOUR_TOKEN"
+}
+```
+
+## Hybrid setup: local fallback + OTLP
+
+A practical migration strategy is to keep file logs for local troubleshooting while also exporting telemetry centrally.
+
+```kdl
+globals {
+    otlp_service_name "ferron-prod"
+    otlp_logs "http://otel-collector.internal:4317/v1/logs" protocol="grpc"
+    otlp_metrics "http://otel-collector.internal:4317/v1/metrics" protocol="grpc"
+    otlp_traces "http://otel-collector.internal:4317/v1/traces" protocol="grpc"
+}
+
+example.com {
+    log "/var/log/ferron/example.com.access.log"
+    error_log "/var/log/ferron/example.com.error.log"
+}
+```
+
+## Log rotation for file-based logging
+
+Use this when you need to manage disk space usage for log files by rotating and retaining them based on size and count.
+
+Log rotation directives are available in Ferron 2.6.0 and newer.
+
+```kdl
+globals {
+    log_date_format "%d/%b/%Y:%H:%M:%S %z"
+    log_format "{client_ip} - {auth_user} [{timestamp}] \"{method} {path_and_query} {version}\" {status_code} {content_length} \"{header:Referer}\" \"{header:User-Agent}\""
+
+    // Rotate access logs when they reach 100MB, keep 5 rotated files
+    log_rotate_size 104857600  // 100 * 1024 * 1024
+    log_rotate_keep 5
+
+    // Rotate error logs when they reach 50MB, keep 3 rotated files
+    error_log_rotate_size 52428800  // 50 * 1024 * 1024
+    error_log_rotate_keep 3
+}
+
+example.com {
+    log "/var/log/ferron/example.com.access.log"
+    error_log "/var/log/ferron/example.com.error.log"
+}
+```
+
+## Hybrid setup with log rotation and OTLP
+
+You can combine log rotation with OTLP export for a robust observability setup:
+
+```kdl
+globals {
+    otlp_service_name "ferron-prod"
+    otlp_logs "http://otel-collector.internal:4317/v1/logs" protocol="grpc"
+    otlp_metrics "http://otel-collector.internal:4317/v1/metrics" protocol="grpc"
+    otlp_traces "http://otel-collector.internal:4317/v1/traces" protocol="grpc"
+
+    // Rotate access logs when they reach 100MB, keep 5 rotated files
+    log_rotate_size 104857600
+    log_rotate_keep 5
+
+    // Rotate error logs when they reach 50MB, keep 3 rotated files
+    error_log_rotate_size 52428800
+    error_log_rotate_keep 3
+}
+
+example.com {
+    log "/var/log/ferron/example.com.access.log"
+    error_log "/var/log/ferron/example.com.error.log"
+}
+```
+
+## Notes and troubleshooting
+
+- Start simple: file logs or std streams first, OTLP second.
+- Keep `otlp_no_verification #false` unless you are in a controlled test environment.
+- If logs are missing, verify backend support in your Ferron build and check endpoint/protocol pairing.
+- If Ferron is behind a reverse proxy, use either `trust_x_forwarded_for` (when using a proxy that sends `X-Forwarded-For` header) or `protocol_proxy` (when using a proxy that send PROXY protocol header) to ensure correct client IP logging.
+- Use [placeholders reference](/docs/configuration/placeholders) when customizing `log_format`.

@@ -1,6 +1,9 @@
 ---
 title: Installation via installer (Windows Server)
+description: "Install Ferron on Windows Server with the installer script. Includes commands, default paths, and how to start/stop the service."
 ---
+
+Ferron can be installed on Windows Server using an installer script. This guide will walk you through the installation process.
 
 ## Installation steps
 
@@ -16,7 +19,9 @@ You will be prompted to choose the installation type.
 
 ### 2. Access the web server
 
-By default, Ferron serves content from the `%SystemDrive%\ferron\wwwroot` directory. Open a web browser and navigate to `http://localhost` to verify that the server is running and serving the default `index.html` file.
+By default, Ferron serves content from the `%SystemDrive%\ferron\wwwroot` directory. Open a web browser and navigate to `http://localhost` to check if the server is running and serving the default `index.html` file.
+
+If you see a "Ferron is installed successfully!" message on the page, the web server is installed successfully and is up and running.
 
 ## File structure
 
@@ -24,6 +29,7 @@ Ferron installed via the installer for Windows Server has following file structu
 
 - _%SystemDrive%\ferron\ferron.exe_ - Ferron web server
 - _%SystemDrive%\ferron\ferron-passwd.exe_ - Ferron user password generation tool
+- _%SystemDrive%\ferron\ferron-precompress.exe_ - Ferron static files precompression tool
 - _%SystemDrive%\ferron\ferron-yaml2kdl.exe_ - Ferron configuration conversion tool
 - _%SystemDrive%\ferron\log\access.log_ - Ferron access log in Combined Log Format
 - _%SystemDrive%\ferron\log\error.log_ - Ferron error log
@@ -36,7 +42,7 @@ Ferron installed via the installer for Windows Server has following file structu
 
 To stop the Ferron service, run:
 
-```sh
+```batch
 net stop ferron
 ```
 
@@ -44,7 +50,7 @@ net stop ferron
 
 To restart the service:
 
-```sh
+```batch
 net stop ferron
 net start ferron
 ```

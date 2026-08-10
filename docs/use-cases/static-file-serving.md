@@ -1,5 +1,6 @@
 ---
 title: Static file serving
+description: "Serve static sites with Ferron using root, compression, directory listings, SPA rewrites, caching, and precompressed assets."
 ---
 
 Configuring Ferron as a static file server is straightforward - you just need to specify the directory containing your static files in the `root` directive. To configure Ferron as a static file server, you can use the configuration below:
@@ -80,3 +81,12 @@ To create precompressed static files, you can use the `ferron-precompress` tool 
 # Replace "/var/www/html" with the directory containing your static files
 ferron-precompress /var/www/html
 ```
+
+## Notes and troubleshooting
+
+- If you get `404 Not Found` for files that should exist, verify the `root` path is correct and readable by the user running Ferron.
+- If SPA routes (for example `/dashboard/settings`) return `404 Not Found`, add the rewrite rule from the SPA section so unknown paths fall back to `/`.
+- If precompressed assets are not served, check that matching files exist (for example `app.js.br` or `app.js.gz`) and regenerate them after changing source assets.
+- If responses look stale while using `cache`, reduce cache lifetime (`file_cache_control`) or temporarily disable cache while debugging.
+- If your site serves both static files and API traffic, split routing with `location` blocks (for example `/api` for proxying, `/` for static files). See [Reverse proxying](/docs/use-cases/reverse-proxy).
+- If you enable automatic TLS for static hosting behind an HTTPS-terminating proxy (for example Cloudflare), use HTTP-01 ACME challenge. See [Automatic TLS](/docs/use-cases/automatic-tls#note-about-cloudflare-proxies-and-other-https-proxies).

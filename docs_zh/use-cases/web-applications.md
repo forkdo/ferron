@@ -1,5 +1,6 @@
 ---
 title: Web 应用程序
+description: "针对 WordPress、Joomla、Laravel 和 YaBB 等应用程序的 Ferron 配置示例，包括重写规则与安全规则。"
 ---
 
 Ferron 与各种 Web 应用程序兼容，例如使用 WordPress、Joomla、Laravel 等构建的应用程序。

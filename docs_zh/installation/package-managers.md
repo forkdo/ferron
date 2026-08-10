@@ -1,5 +1,6 @@
 ---
 title: 通过包管理器安装 (社区维护)
+description: "通过 Homebrew、Nix 或 Arch AUR 安装社区维护的 Ferron 软件包，并介绍已安装命令与服务的说明。"
 ---
 
 Ferron 有几个社区维护的软件包，可以通过各种包管理器进行安装。以下是通过包管理器安装 Ferron 的说明。

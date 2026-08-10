@@ -1,6 +1,9 @@
 ---
 title: Manual installation
+description: "Manually install Ferron from a ZIP archive: download, extract, configure, run, reload config on Unix, and use bundled utilities."
 ---
+
+Ferron can be installed manually from a ZIP archive by following these steps:
 
 ## Installation steps
 
@@ -28,13 +31,14 @@ After extraction, you should see the following files and directories:
 
 - `ferron` or `ferron.exe` - the main Ferron web server executable.
 - `ferron-passwd` or `ferron-passwd.exe` - a tool for generating hashed passwords for the server's configuration.
-- `ferron-yaml2kdl` or `ferron-yaml2kdl.exe` - a tool for converting the Ferron 1.x YAML configuration to Ferron 2.x KDL configuration.=
+- `ferron-precompress` or `ferron-precompress.exe` - Ferron static files precompression tool.
+- `ferron-yaml2kdl` or `ferron-yaml2kdl.exe` - a tool for converting the Ferron 1.x YAML configuration to Ferron 2.x KDL configuration.
 - `ferron.kdl` - an example configuration file for Ferron.
 - `wwwroot/` - the webroot directory containing the default `index.html` file.
 
 ### 4. Configure Ferron
 
-Modify the `ferron.yaml` configuration file to suit your server's requirements. This file includes settings for server ports, logging, modules, and more. Detailed configuration options are available in the [server configuration properties page](/docs/configuration).
+Modify the `ferron.kdl` configuration file to suit your server's requirements. This file includes settings for server ports, logging, modules, and more. Detailed configuration options are available in the [server configuration properties page](/docs/configuration/fundamentals).
 
 ### 5. Run Ferron
 
@@ -56,7 +60,9 @@ Modify the `ferron.yaml` configuration file to suit your server's requirements. 
 
 ### 6. Access the web server
 
-By default, Ferron serves content from the `wwwroot` directory. Open a web browser and navigate to `http://localhost` to verify that the server is running and serving the default `index.html` file.
+By default, Ferron serves content from the `wwwroot` directory. Open a web browser and navigate to `http://localhost` to check if the server is running and serving the default `index.html` file.
+
+If you see a "Ferron is installed successfully!" message on the page, the web server is installed successfully and is up and running.
 
 ## Reloading the configuration (Unix-like systems)
 
@@ -65,19 +71,3 @@ To reload the configuration without restarting the service, send a `SIGHUP` sign
 ```bash
 kill -HUP $(pidof ferron)
 ```
-
-## Additional tools
-
-- **Ferron password tool**:
-
-  The `ferron-passwd` tool assists in generating user entries with hashed passwords for secure configurations. To use it:
-  - **Unix-like Systems**:
-    ```bash
-    ./ferron-passwd someuser
-    ```
-  - **Windows**:
-    ```cmd
-    ferron-passwd.exe someuser
-    ```
-
-  Follow the on-screen prompts to generate the necessary entries for your configuration file.

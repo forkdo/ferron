@@ -1,5 +1,6 @@
 ---
 title: Server modules
+description: "Overview of Ferron modules: static serving, caching, proxying, CGI/FastCGI, limits, replacements, and compile-time add-ons."
 ---
 
 You can extend Ferron with modules written in Rust.
@@ -70,10 +71,9 @@ If you're using this module with static file serving, it's recommended to disabl
 
 ### _rproxy_ module
 
-The reverse proxy functionality is enabled when _proxyTo_ or _secureProxyTo_ configuration property is specified.
-
 The following request headers are provided to the backend server:
 
 - **X-Forwarded-Proto** - if the original request is encrypted, it's `"https"`, otherwise it's `"http"`.
 - **X-Forwarded-Host** - the value of the _Host_ header from the original request
 - **X-Forwarded-For** - the client's IP address
+- **Forwarded** - standardized header with the same information as the previous three headers

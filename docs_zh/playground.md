@@ -1,5 +1,6 @@
 ---
 title: 演练场
+description: "使用社区维护的 Ferron 演练场在浏览器中测试配置并发起 HTTP 请求——无需本地安装。"
 ---
 
 如果您想在不先安装 Ferron 的情况下试用它，您可以在[一个社区维护的演练场](https://tech-playground.com/playgrounds/ferron/)上试用。

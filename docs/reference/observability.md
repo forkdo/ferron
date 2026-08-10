@@ -1,5 +1,6 @@
 ---
 title: Observability backends
+description: "Configure Ferron observability backends (logfile, OTLP) and learn the exported OpenTelemetry-style metrics, logs, and traces."
 ---
 
 Ferron 2.2.0 and newer support modular observability backends. This allows you to monitor your Ferron server and gain insights into its performance and behavior.
@@ -8,6 +9,7 @@ The following observability backend support is built into Ferron and is enabled 
 
 - _logfile_ - this observability backend logs requests and errors into files.
 - _otlp_ (Ferron 2.2.0 or newer) - this observability backend sends requests and errors into a service supporting OTLP (such as an OpenTelemetry collector).
+- _stdlog_ (Ferron 2.5.0 or newer) - this observability backend logs requests and errors into standard I/O.
 
 Ferron also supports additional observability backends that can be enabled at compile-time.
 

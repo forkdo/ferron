@@ -1,10 +1,11 @@
 ---
 title: 通过 Docker 安装
+description: "在 Docker 或 Docker Compose 中运行 Ferron：拉取镜像、启动容器、验证、管理容器，并查看可用的镜像标签。"
 ---
 
 ## 先决条件
 
-在开始安装之前，请确保满足以下条件：
+在开始安装之前，您需要：
 
 - 系统已安装 Docker。如果尚未安装 Docker，请按照官方 [Docker 安装指南](https://docs.docker.com/get-started/get-docker/) 进行安装。
 - 能够连接互联网以下载 Ferron Docker 镜像。
@@ -29,10 +30,10 @@ docker run --name myferron -d -p 80:80 --restart=always ferronserver/ferron:2
 
 该命令执行以下操作：
 
-- `--name myferron`：为运行的容器指定名称（`myferron`）。
-- `-d`：以分离模式（后台）运行容器。
-- `-p 80:80`：将容器的 80 端口映射到宿主机的 80 端口。
-- `--restart=always`：确保容器在停止或系统重启时自动重启。
+- `--name myferron` - 为运行的容器指定名称（`myferron`）。
+- `-d` - 以分离模式（后台进程）运行容器。
+- `-p 80:80` - 将容器的 80 端口映射到宿主机的 80 端口。
+- `--restart=always` - 确保容器在停止或系统重启时自动重启。
 
 ## 验证安装
 
@@ -44,9 +45,9 @@ docker ps
 
 此时应显示一个名为 `myferron` 的运行中容器。
 
-要测试 Web 服务器，请打开浏览器并访问 `http://localhost`。您应该会看到 Ferron 的默认欢迎页面。
+要测试 Web 服务器，请打开浏览器并访问 `http://localhost`。如果您在页面上看到 "Ferron is installed successfully!"（Ferron 安装成功！）消息，说明 Web 服务器已成功安装并正在运行。
 
-或者，也可以使用 `curl` 进行测试：
+您也可以改用 `curl` 进行测试：
 
 ```sh
 curl http://localhost
@@ -58,6 +59,7 @@ Docker 中的 Ferron 具有以下文件结构：
 
 - _/usr/sbin/ferron_ - Ferron Web 服务器
 - _/usr/sbin/ferron-passwd_ - Ferron 用户密码生成工具
+- _/usr/sbin/ferron-precompress_ - Ferron 静态文件预压缩工具
 - _/usr/sbin/ferron-yaml2kdl_ - Ferron 配置转换工具
 - _/var/cache/ferron-acme_ - Ferron 的 ACME 缓存目录（如果未在服务器配置中显式指定）
 - _/var/log/ferron/access.log_ - Ferron 访问日志（Combined Log Format，默认配置）

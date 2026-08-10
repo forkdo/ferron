@@ -1,6 +1,9 @@
 ---
 title: 手动安装
+description: "从 ZIP 压缩包手动安装 Ferron：下载、解压、配置、运行、在 Unix 上重新加载配置，以及使用附带的实用工具。"
 ---
+
+您可以按照以下步骤从 ZIP 压缩包手动安装 Ferron：
 
 ## 安装步骤
 
@@ -28,13 +31,14 @@ title: 手动安装
 
 - `ferron` 或 `ferron.exe` - 主要的 Ferron Web 服务器可执行文件。
 - `ferron-passwd` 或 `ferron-passwd.exe` - 用于为服务器配置生成哈希密码的工具。
+- `ferron-precompress` 或 `ferron-precompress.exe` - Ferron 静态文件预压缩工具。
 - `ferron-yaml2kdl` 或 `ferron-yaml2kdl.exe` - 用于将 Ferron 1.x YAML 配置转换为 Ferron 2.x KDL 配置的工具。
 - `ferron.kdl` - Ferron 的示例配置文件。
 - `wwwroot/` - 包含默认 `index.html` 文件的 Web 根目录。
 
 ### 4. 配置 Ferron
 
-修改 `ferron.yaml` 配置文件以满足您的服务器要求。此文件包括服务器端口、日志记录、模块等设置。详细的配置选项可在[服务器配置属性页面](/docs/configuration)中找到。
+修改 `ferron.kdl` 配置文件以满足您的服务器要求。此文件包括服务器端口、日志记录、模块等设置。详细的配置选项可在[服务器配置属性页面](/docs/configuration/fundamentals)中找到。
 
 ### 5. 运行 Ferron
 
@@ -56,7 +60,9 @@ title: 手动安装
 
 ### 6. 访问 Web 服务器
 
-默认情况下，Ferron 从 `wwwroot` 目录提供内容。打开 Web 浏览器并导航到 `http://localhost` 以验证服务器是否正在运行并提供默认的 `index.html` 文件。
+默认情况下，Ferron 从 `wwwroot` 目录提供内容。打开 Web 浏览器并导航到 `http://localhost` 以检查服务器是否正在运行并提供默认的 `index.html` 文件。
+
+如果您在页面上看到 "Ferron is installed successfully!"（Ferron 安装成功！）消息，说明 Web 服务器已成功安装并正在运行。
 
 ## 重新加载配置 (类 Unix 系统)
 
@@ -65,19 +71,3 @@ title: 手动安装
 ```bash
 kill -HUP $(pidof ferron)
 ```
-
-## 附加工具
-
-- **Ferron 密码工具**:
-
-  `ferron-passwd` 工具有助于为安全配置生成带有哈希密码的用户条目。要使用它：
-  - **类 Unix 系统**:
-    ```bash
-    ./ferron-passwd someuser
-    ```
-  - **Windows**:
-    ```cmd
-    ferron-passwd.exe someuser
-    ```
-
-  按照屏幕上的提示为您的配置文件生成必要的条目。

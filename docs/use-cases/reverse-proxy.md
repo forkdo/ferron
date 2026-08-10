@@ -1,5 +1,6 @@
 ---
 title: Reverse proxying
+description: "Configure Ferron as a reverse proxy with WebSocket support, optional static/SPA hosting, multiple locations, and precompressed assets."
 ---
 
 Configuring Ferron as a reverse proxy is straightforward - you just need to specify the backend server URL in `proxy` directive. To configure Ferron as a reverse proxy, you can use the configuration below:
@@ -10,6 +11,8 @@ example.com {
     proxy "http://localhost:3000/" // Replace "http://localhost:3000" with the backend server URL
 }
 ```
+
+The WebSocket protocol is supported out of the box in this configuration example - no additional configuration is required.
 
 ## Reverse proxy with static file serving support
 
@@ -91,18 +94,18 @@ example.com {
 }
 ```
 
-## Reverse proxying with intact "Host" header
+## HTTPS reverse proxying with intact "Host" header
 
-Ferron by default rewrites the "Host" header before sending the request to the backend server, and preserves the original "Host" header value in the "X-Forwarded-Host" header.
+Ferron by default rewrites the "Host" header before sending the request to the backend server (if the backend server uses HTTPS protocol), and preserves the original "Host" header value in the "X-Forwarded-Host" header.
 
 However, there are web applications that may not work with this configuration. This can result in host header mismatch errors, and other issues.
 
 In such cases, you can set the "Host" header value to the original value:
 
 ```kdl
-// Example configuration with reverse proxy and intact "Host" header. Replace "example.com" with your domain name.
+// Example configuration with HTTPS reverse proxy and intact "Host" header. Replace "example.com" with your domain name.
 example.com {
-    proxy "http://localhost:3000/" // Replace "http://localhost:3000" with the backend server URL
+    proxy "https://localhost:8443/" // Replace "https://localhost:8443" with the backend server URL
     proxy_request_header_replace "Host" "{header:Host}"
 }
 ```
@@ -146,6 +149,17 @@ grpc.example.com {
 }
 ```
 
+## Reverse proxy to dynamic backends (via SRV records)
+
+Ferron supports reverse proxying to dynamic backends via SRV records. To configure Ferron for reverse proxying to dynamic backends, you can use this configuration:
+
+```kdl
+// Example configuration with reverse proxy to dynamic backends. Replace "example.com" with your domain name.
+example.com {
+    proxy_srv "http://_backend._tcp.example.com/" // Replace "_backend._tcp.example.com" with the actual SRV record for your backend servers
+}
+```
+
 ## Example: Ferron multiplexing to several backend servers
 
 In this example, the `example.com` and `bar.example.com` domains point to a server running Ferron.
@@ -185,3 +199,13 @@ bar.example.com {
 ```
 
 For `http://calender.example.net:5000/agenda/example`, you will probably have to either configure the calendar service to strip 'agenda/' or configure URL rewriting in Ferron.
+
+## Notes and troubleshooting
+
+- If you get `502 Bad Gateway` or `504 Gateway Timeout`, verify the backend URL/port, make sure the backend process is running, and confirm network/firewall access from Ferron to the backend.
+- If only some paths fail, review `location` matching order and `remove_base` behavior so forwarded paths match what the backend expects.
+- If your backend application reports host mismatch errors or wrong absolute URLs, use `proxy_request_header_replace "Host" "{header:Host}"` (see the intact Host header section).
+- If requests return unexpected `404 Not Found` at the backend, test with and without `disable_url_sanitizer` and confirm backend path handling before disabling URL sanitization.
+- For mixed static + API setups, keep API routes in a dedicated prefix like `/api` and use a catch-all `/` location for static files or SPA fallback.
+- For gRPC upstreams, enable `proxy_http2_only`; without HTTP/2-only proxying, many gRPC backends will fail.
+- If Ferron is behind an HTTPS-terminating proxy and you also use automatic TLS, use HTTP-01 challenge instead of TLS-ALPN-01. See [Automatic TLS](/docs/use-cases/automatic-tls#note-about-cloudflare-proxies-and-other-https-proxies).
