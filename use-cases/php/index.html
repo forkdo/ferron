@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Ferron 是一款快速的 Web 服务器，具备自动 TLS 证书管理、简便配置和坚实的安全性——你可以在几分钟内上线。">
+        <meta name="description" content="使用 CGI 或 FastCGI（PHP-FPM 或 PHP-CGI）在 Ferron 上托管 PHP 站点，包含示例 KDL 配置与故障排查说明。">
       
       
         <meta name="author" content="Jetsung Chan">
@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="zensical-0.0.19">
+      <meta name="generator" content="zensical-0.0.53">
     
     
       
@@ -36,7 +36,7 @@
       
         
       
-      <link rel="stylesheet" href="../../assets/stylesheets/modern/main.d4922b3c.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/modern/main.20815dad.min.css">
       
         
           
@@ -55,12 +55,12 @@
         
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
         <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
       
     
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,a=__md_scope)=>JSON.parse(t.getItem(a.pathname+"."+e)),__md_set=(e,t,a=localStorage,_=__md_scope)=>{try{a.setItem(_.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    <script>__md_scope=new URL("../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
       
 
@@ -81,8 +81,13 @@
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer"></label>
+    <label class="md-overlay" for="__drawer" aria-label="导航栏"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#fastcgi-php" class="md-skip">
+          跳转至
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -99,10 +104,10 @@
     <a href="../.." title="Ferron 中文文档" class="md-header__button md-logo" aria-label="Ferron 中文文档" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 5v16M20.001 19A2 2 0 0 0 22 17V5a2 2 0 0 0-1.999-2L16 3.002A5 5 0 0 0 12 5a5 5 0 0 0-4-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 1.999 2H8a5 5 0 0 1 4 2 5 5 0 0 1 4-2z"/></svg>
 
     </a>
-    <label class="md-header__button md-icon" for="__drawer">
+    <label class="md-header__button md-icon" for="__drawer" aria-label="导航栏">
       
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
     </label>
@@ -156,7 +161,7 @@
     
       
       
-        <label class="md-header__button md-icon" for="__search">
+        <label class="md-header__button md-icon" for="__search" aria-label="查找">
           
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
         </label>
@@ -172,7 +177,7 @@
         <a href="https://github.com/ferronweb/ferron" title="前往仓库" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
     ferronweb/ferron
@@ -208,7 +213,7 @@
     <a href="../.." title="Ferron 中文文档" class="md-nav__button md-logo" aria-label="Ferron 中文文档" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 5v16M20.001 19A2 2 0 0 0 22 17V5a2 2 0 0 0-1.999-2L16 3.002A5 5 0 0 0 12 5a5 5 0 0 0-4-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 1.999 2H8a5 5 0 0 1 4 2 5 5 0 0 1 4-2z"/></svg>
 
     </a>
     Ferron 中文文档
@@ -218,7 +223,7 @@
       <a href="https://github.com/ferronweb/ferron" title="前往仓库" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
     ferronweb/ferron
@@ -242,8 +247,7 @@
   <span class="md-ellipsis">
     
   
-    欢迎阅读文档！
-  
+  欢迎阅读文档！
 
     
   </span>
@@ -269,8 +273,7 @@
   <span class="md-ellipsis">
     
   
-    演练场
-  
+  演练场
 
     
   </span>
@@ -330,8 +333,7 @@
   <span class="md-ellipsis">
     
   
-    安装
-  
+  安装
 
     
   </span>
@@ -346,8 +348,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    安装
-  
+  安装
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
@@ -366,8 +367,7 @@
   <span class="md-ellipsis">
     
   
-    安装程序 (GNU/Linux)
-  
+  安装程序 (GNU/Linux)
 
     
   </span>
@@ -394,8 +394,7 @@
   <span class="md-ellipsis">
     
   
-    安装程序 (Windows Server)
-  
+  安装程序 (Windows Server)
 
     
   </span>
@@ -422,8 +421,7 @@
   <span class="md-ellipsis">
     
   
-    Debian/Ubuntu
-  
+  Debian/Ubuntu
 
     
   </span>
@@ -450,8 +448,7 @@
   <span class="md-ellipsis">
     
   
-    RHEL/Fedora
-  
+  RHEL/Fedora
 
     
   </span>
@@ -478,8 +475,7 @@
   <span class="md-ellipsis">
     
   
-    Docker
-  
+  Docker
 
     
   </span>
@@ -506,8 +502,7 @@
   <span class="md-ellipsis">
     
   
-    包管理器 (社区)
-  
+  包管理器 (社区)
 
     
   </span>
@@ -534,8 +529,7 @@
   <span class="md-ellipsis">
     
   
-    手动安装
-  
+  手动安装
 
     
   </span>
@@ -599,8 +593,7 @@
   <span class="md-ellipsis">
     
   
-    常见用例
-  
+  常见用例
 
     
   </span>
@@ -615,8 +608,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    常见用例
-  
+  常见用例
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
@@ -635,8 +627,7 @@
   <span class="md-ellipsis">
     
   
-    静态文件服务
-  
+  静态文件服务
 
     
   </span>
@@ -663,8 +654,7 @@
   <span class="md-ellipsis">
     
   
-    反向代理
-  
+  反向代理
 
     
   </span>
@@ -687,19 +677,35 @@
   
     <li class="md-nav__item md-nav__item--active">
       
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
       
-      <a href="./" class="md-nav__link md-nav__link--active">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  PHP 托管
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
     
   
-    PHP 托管
-  
+  PHP 托管
 
     
   </span>
@@ -707,6 +713,57 @@
   
 
       </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#fastcgi-php" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        通过 FastCGI 运行 PHP（推荐）
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cgi-php" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        通过 CGI 运行 PHP
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        注意事项与故障排查
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -727,8 +784,7 @@
   <span class="md-ellipsis">
     
   
-    Web 应用程序
-  
+  Web 应用程序
 
     
   </span>
@@ -755,8 +811,7 @@
   <span class="md-ellipsis">
     
   
-    重定向
-  
+  重定向
 
     
   </span>
@@ -828,8 +883,7 @@
   <span class="md-ellipsis">
     
   
-    参考
-  
+  参考
 
     
   </span>
@@ -844,8 +898,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    参考
-  
+  参考
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
@@ -864,8 +917,7 @@
   <span class="md-ellipsis">
     
   
-    服务器配置
-  
+  服务器配置
 
     
   </span>
@@ -892,8 +944,7 @@
   <span class="md-ellipsis">
     
   
-    服务器配置 (旧版)
-  
+  服务器配置 (旧版)
 
     
   </span>
@@ -920,8 +971,7 @@
   <span class="md-ellipsis">
     
   
-    服务器模块
-  
+  服务器模块
 
     
   </span>
@@ -948,8 +998,7 @@
   <span class="md-ellipsis">
     
   
-    可观察性后端
-  
+  可观察性后端
 
     
   </span>
@@ -976,8 +1025,7 @@
   <span class="md-ellipsis">
     
   
-    自动 TLS
-  
+  自动 TLS
 
     
   </span>
@@ -1004,8 +1052,7 @@
   <span class="md-ellipsis">
     
   
-    命令
-  
+  命令
 
     
   </span>
@@ -1032,8 +1079,7 @@
   <span class="md-ellipsis">
     
   
-    FerrBench
-  
+  FerrBench
 
     
   </span>
@@ -1060,8 +1106,7 @@
   <span class="md-ellipsis">
     
   
-    Rust crate 文档
-  
+  Rust crate 文档
 
     
   </span>
@@ -1088,8 +1133,7 @@
   <span class="md-ellipsis">
     
   
-    Ferron 1.x 文档
-  
+  Ferron 1.x 文档
 
     
   </span>
@@ -1119,6 +1163,17 @@
               
               <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
                   <div class="md-sidebar__inner">
                     
 
@@ -1127,6 +1182,47 @@
   
   
   
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#fastcgi-php" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        通过 FastCGI 运行 PHP（推荐）
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cgi-php" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        通过 CGI 运行 PHP
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        注意事项与故障排查
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -1153,6 +1249,7 @@
     <li class="md-path__item">
       <a href="../.." class="md-path__link">
         
+  
   <span class="md-ellipsis">
     欢迎阅读文档！
   </span>
@@ -1168,9 +1265,25 @@
   
     
     
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
       <li class="md-path__item">
         <a href="../static-file-serving/" class="md-path__link">
           
+  
   <span class="md-ellipsis">
     常见用例
   </span>
@@ -1192,30 +1305,44 @@
   
 
 
-  <h1>PHP 托管</h1>
+  <h1 id="__skip">PHP 托管</h1>
 
-<p>Ferron 支持使用 PHP-CGI、配置为 FastCGI 服务器的 PHP-CGI 或 PHP-FPM 运行 PHP 脚本。这使您可以使用 Ferron 托管使用基于 PHP 的 CMS（如 WordPress 或 Joomla）构建的网站。</p>
-<p>要通过 CGI 使用 Ferron 配置 PHP，您可以使用此配置：</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>// 通过 CGI 使用 PHP 的示例配置。将“example.com”替换为您的域名。
+<p>Ferron 可以通过 CGI 或 FastCGI 运行 PHP 应用程序。对于大多数部署，推荐使用 FastCGI，因为 PHP 工作进程会在请求之间保持存活，从而减少进程启动开销并提高吞吐量。</p>
+<h2 id="fastcgi-php">通过 FastCGI 运行 PHP（推荐）<a class="headerlink" href="#fastcgi-php" title="Permanent link">&para;</a></h2>
+<p>要通过 FastCGI（通常是 PHP-FPM）运行 PHP，请使用 <code>fcgi_php</code>：</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>// 通过 FastCGI 使用 PHP 的示例配置。将“example.com”替换为您的域名。
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>example.com {
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    root &quot;/var/www/html&quot;
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    cgi
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    cgi_extension &quot;.php&quot;
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>}
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    root &quot;/var/www/html&quot; // 将 &quot;/var/www/html&quot; 替换为您的 PHP 应用目录
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    fcgi_php &quot;unix:///run/php/php8.4-fpm.sock&quot; // 替换为您的 PHP FastCGI 套接字或 TCP URL
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    // 如果使用 Unix 套接字通过 PHP-FPM 通信，请确保套接字可被 Ferron 访问。
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    // 例如，在您的 PHP-FPM 池配置中：
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    //   listen.owner = ferron
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    //   listen.group = ferron
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>}
 </span></code></pre></div>
-<p>要通过 FastCGI 使用 Ferron 配置 PHP，您可以使用此配置：</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>// 通过 FastCGI 使用 PHP 的示例配置。将“example.com”替换为您的域名。
+<p>当您的 PHP FastCGI 服务器未通过 Unix 套接字暴露时，也可以将 <code>fcgi_php</code> 指向 TCP 监听器（例如 <code>tcp://127.0.0.1:9000/</code>）。</p>
+<h2 id="cgi-php">通过 CGI 运行 PHP<a class="headerlink" href="#cgi-php" title="Permanent link">&para;</a></h2>
+<p>如果您特别想要经典的 CGI 执行方式，请启用 <code>cgi</code> 并映射 <code>.php</code> 扩展名：</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>// 通过 CGI 使用 PHP 的示例配置。将“example.com”替换为您的域名。
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>example.com {
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    root &quot;/var/www/html&quot;
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    fcgi_php &quot;unix:///run/php/php8.4-fpm.sock&quot; // 替换为具有 PHP FastCGI 守护程序套接字实际路径的 Unix 套接字 URL。
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    // 此外，如果将 Unix 套接字与 PHP-FPM 一起使用，
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    // 请将 PHP 池配置中的侦听器所有者和组设置为 Web 服务器用户（如果您使用 GNU/Linux 安装程序，则为 `ferron`）
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    // 例如：
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    //   listen.owner = ferron
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    //   listen.group = ferron
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>}
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    root &quot;/var/www/html&quot; // 将 &quot;/var/www/html&quot; 替换为您的 PHP 应用目录
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    cgi
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    cgi_extension &quot;.php&quot;
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>}
 </span></code></pre></div>
-<p>为确保最佳的 Web 服务器性能和效率，建议使用 FastCGI 而不是 CGI，因为 FastCGI 使 PHP 进程持续运行，减少了为每个请求启动新进程的开销，从而提高了响应时间和资源利用率。</p>
+<p>CGI 可以正常工作，但对于生产负载通常比 FastCGI 慢，因为每次请求都会启动一个 PHP 进程。</p>
+<h2 id="_1">注意事项与故障排查<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>如果 PHP 文件被下载而不是执行，请确认您已在正确的域名/位置块中启用了 <code>fcgi_php</code> 或 <code>cgi</code> + <code>cgi_extension ".php"</code>。</li>
+<li>如果使用 CGI 模块配合 PHP-CGI，您可能需要在 CGI 的 <code>php.ini</code> 中设置 <code>cgi.force_redirect = 0</code>；否则请求可能因 force-cgi-redirect 警告而失败。</li>
+<li>如果使用 <code>fcgi_php</code> 时遇到 <code>500 Internal Server Error</code>，请确认套接字或 TCP 端点存在且您的 PHP FastCGI 守护程序（PHP-FPM 或 FastCGI 模式的 PHP-CGI）正在运行。</li>
+<li>如果使用 Unix 套接字，请确保 Ferron 可以访问套接字文件（PHP-FPM 池配置中的所有者/组/权限）。</li>
+<li>使用 CGI 时，请将上传/下载目录放在 <code>cgi-bin</code> 之外，以避免上传文件被意外当作 CGI 执行。</li>
+<li>有关“美观 URL”和前端控制器模式（常见于 PHP CMS/框架技术栈），请参阅 <a href="/docs/use-cases/url-rewriting">URL 重写</a>。</li>
+<li>有关框架/CMS 特定的重写与加固，请参阅 <a href="/docs/use-cases/web-applications">Web 应用程序</a>。</li>
+<li>有关指令详情（<code>cgi</code>、<code>cgi_extension</code>、<code>fcgi_php</code>），请参阅 <a href="/docs/configuration/application-backends">配置：应用后端</a>。</li>
+</ul>
 
 
 
@@ -1323,11 +1450,10 @@
     
       
       
-      
-      <script id="__config" type="application/json">{"annotate":null,"base":"../..","features":["announce.dismiss","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.expand","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight"],"search":"../../assets/javascripts/workers/search.e2d2d235.min.js","tags":null,"translations":{"clipboard.copied":"已复制","clipboard.copy":"复制","search.result.more.one":"在该页上还有 1 个符合条件的结果","search.result.more.other":"在该页上还有 # 个符合条件的结果","search.result.none":"没有找到符合条件的结果","search.result.one":"找到 1 个符合条件的结果","search.result.other":"# 个符合条件的结果","search.result.placeholder":"键入以开始搜索","search.result.term.missing":"缺少","select.version":"选择当前版本"},"version":null}</script>
+      <script id="__config" type="application/json">{"annotate":null,"base":"../..","features":["announce.dismiss","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.expand","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight"],"search":"../../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"已复制","clipboard.copy":"复制","search.result.more.one":"在该页上还有 1 个符合条件的结果","search.result.more.other":"在该页上还有 # 个符合条件的结果","search.result.none":"没有找到符合条件的结果","search.result.one":"找到 1 个符合条件的结果","search.result.other":"# 个符合条件的结果","search.result.placeholder":"键入以开始搜索","search.result.term.missing":"缺少","select.version":"选择当前版本"},"version":null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.8ffeb9c9.min.js"></script>
+      <script src="../../assets/javascripts/bundle.69c251d7.min.js"></script>
       
     
   </body>

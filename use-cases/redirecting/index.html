@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Ferron 是一款快速的 Web 服务器，具备自动 TLS 证书管理、简便配置和坚实的安全性——你可以在几分钟内上线。">
+        <meta name="description" content="在 Ferron 中使用 status + Location 进行流量重定向，包括保留路径的重定向和规范化主机重定向。">
       
       
         <meta name="author" content="Jetsung Chan">
@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="zensical-0.0.19">
+      <meta name="generator" content="zensical-0.0.53">
     
     
       
@@ -36,7 +36,7 @@
       
         
       
-      <link rel="stylesheet" href="../../assets/stylesheets/modern/main.d4922b3c.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/modern/main.20815dad.min.css">
       
         
           
@@ -55,12 +55,12 @@
         
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
         <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
       
     
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,a=__md_scope)=>JSON.parse(t.getItem(a.pathname+"."+e)),__md_set=(e,t,a=localStorage,_=__md_scope)=>{try{a.setItem(_.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    <script>__md_scope=new URL("../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
       
 
@@ -81,11 +81,11 @@
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer"></label>
+    <label class="md-overlay" for="__drawer" aria-label="导航栏"></label>
     <div data-md-component="skip">
       
         
-        <a href="#www-url-www-url" class="md-skip">
+        <a href="#url" class="md-skip">
           跳转至
         </a>
       
@@ -104,10 +104,10 @@
     <a href="../.." title="Ferron 中文文档" class="md-header__button md-logo" aria-label="Ferron 中文文档" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 5v16M20.001 19A2 2 0 0 0 22 17V5a2 2 0 0 0-1.999-2L16 3.002A5 5 0 0 0 12 5a5 5 0 0 0-4-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 1.999 2H8a5 5 0 0 1 4 2 5 5 0 0 1 4-2z"/></svg>
 
     </a>
-    <label class="md-header__button md-icon" for="__drawer">
+    <label class="md-header__button md-icon" for="__drawer" aria-label="导航栏">
       
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
     </label>
@@ -161,7 +161,7 @@
     
       
       
-        <label class="md-header__button md-icon" for="__search">
+        <label class="md-header__button md-icon" for="__search" aria-label="查找">
           
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
         </label>
@@ -177,7 +177,7 @@
         <a href="https://github.com/ferronweb/ferron" title="前往仓库" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
     ferronweb/ferron
@@ -213,7 +213,7 @@
     <a href="../.." title="Ferron 中文文档" class="md-nav__button md-logo" aria-label="Ferron 中文文档" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 5v16M20.001 19A2 2 0 0 0 22 17V5a2 2 0 0 0-1.999-2L16 3.002A5 5 0 0 0 12 5a5 5 0 0 0-4-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 1.999 2H8a5 5 0 0 1 4 2 5 5 0 0 1 4-2z"/></svg>
 
     </a>
     Ferron 中文文档
@@ -223,7 +223,7 @@
       <a href="https://github.com/ferronweb/ferron" title="前往仓库" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
     ferronweb/ferron
@@ -247,8 +247,7 @@
   <span class="md-ellipsis">
     
   
-    欢迎阅读文档！
-  
+  欢迎阅读文档！
 
     
   </span>
@@ -274,8 +273,7 @@
   <span class="md-ellipsis">
     
   
-    演练场
-  
+  演练场
 
     
   </span>
@@ -335,8 +333,7 @@
   <span class="md-ellipsis">
     
   
-    安装
-  
+  安装
 
     
   </span>
@@ -351,8 +348,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    安装
-  
+  安装
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
@@ -371,8 +367,7 @@
   <span class="md-ellipsis">
     
   
-    安装程序 (GNU/Linux)
-  
+  安装程序 (GNU/Linux)
 
     
   </span>
@@ -399,8 +394,7 @@
   <span class="md-ellipsis">
     
   
-    安装程序 (Windows Server)
-  
+  安装程序 (Windows Server)
 
     
   </span>
@@ -427,8 +421,7 @@
   <span class="md-ellipsis">
     
   
-    Debian/Ubuntu
-  
+  Debian/Ubuntu
 
     
   </span>
@@ -455,8 +448,7 @@
   <span class="md-ellipsis">
     
   
-    RHEL/Fedora
-  
+  RHEL/Fedora
 
     
   </span>
@@ -483,8 +475,7 @@
   <span class="md-ellipsis">
     
   
-    Docker
-  
+  Docker
 
     
   </span>
@@ -511,8 +502,7 @@
   <span class="md-ellipsis">
     
   
-    包管理器 (社区)
-  
+  包管理器 (社区)
 
     
   </span>
@@ -539,8 +529,7 @@
   <span class="md-ellipsis">
     
   
-    手动安装
-  
+  手动安装
 
     
   </span>
@@ -604,8 +593,7 @@
   <span class="md-ellipsis">
     
   
-    常见用例
-  
+  常见用例
 
     
   </span>
@@ -620,8 +608,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    常见用例
-  
+  常见用例
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
@@ -640,8 +627,7 @@
   <span class="md-ellipsis">
     
   
-    静态文件服务
-  
+  静态文件服务
 
     
   </span>
@@ -668,8 +654,7 @@
   <span class="md-ellipsis">
     
   
-    反向代理
-  
+  反向代理
 
     
   </span>
@@ -696,8 +681,7 @@
   <span class="md-ellipsis">
     
   
-    PHP 托管
-  
+  PHP 托管
 
     
   </span>
@@ -724,8 +708,7 @@
   <span class="md-ellipsis">
     
   
-    Web 应用程序
-  
+  Web 应用程序
 
     
   </span>
@@ -748,7 +731,7 @@
   
     <li class="md-nav__item md-nav__item--active">
       
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
       
       
       
@@ -759,8 +742,7 @@
   <span class="md-ellipsis">
     
   
-    重定向
-  
+  重定向
 
     
   </span>
@@ -770,15 +752,14 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <a href="./" class="md-nav__link md-nav__link--active">
+      <a href="././" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
     
   
-    重定向
-  
+  重定向
 
     
   </span>
@@ -802,11 +783,55 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#www-url-www-url" class="md-nav__link">
+  <a href="#url" class="md-nav__link">
     <span class="md-ellipsis">
+      <span class="md-typeset">
+        将整个站点重定向到另一个 URL
+      </span>
+    </span>
+  </a>
+  
+</li>
       
-        从不带“www.”的 URL 重定向到带“www.”的 URL
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        重定向并保留请求路径
+      </span>
+    </span>
+  </a>
+  
+</li>
       
+        <li class="md-nav__item">
+  <a href="#www-www" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        规范化主机重定向（非 www -&gt; www）
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#www-www_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        规范化主机重定向（www -&gt; 非 www）
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        注意事项与故障排查
+      </span>
     </span>
   </a>
   
@@ -880,8 +905,7 @@
   <span class="md-ellipsis">
     
   
-    参考
-  
+  参考
 
     
   </span>
@@ -896,8 +920,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    参考
-  
+  参考
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
@@ -916,8 +939,7 @@
   <span class="md-ellipsis">
     
   
-    服务器配置
-  
+  服务器配置
 
     
   </span>
@@ -944,8 +966,7 @@
   <span class="md-ellipsis">
     
   
-    服务器配置 (旧版)
-  
+  服务器配置 (旧版)
 
     
   </span>
@@ -972,8 +993,7 @@
   <span class="md-ellipsis">
     
   
-    服务器模块
-  
+  服务器模块
 
     
   </span>
@@ -1000,8 +1020,7 @@
   <span class="md-ellipsis">
     
   
-    可观察性后端
-  
+  可观察性后端
 
     
   </span>
@@ -1028,8 +1047,7 @@
   <span class="md-ellipsis">
     
   
-    自动 TLS
-  
+  自动 TLS
 
     
   </span>
@@ -1056,8 +1074,7 @@
   <span class="md-ellipsis">
     
   
-    命令
-  
+  命令
 
     
   </span>
@@ -1084,8 +1101,7 @@
   <span class="md-ellipsis">
     
   
-    FerrBench
-  
+  FerrBench
 
     
   </span>
@@ -1112,8 +1128,7 @@
   <span class="md-ellipsis">
     
   
-    Rust crate 文档
-  
+  Rust crate 文档
 
     
   </span>
@@ -1140,8 +1155,7 @@
   <span class="md-ellipsis">
     
   
-    Ferron 1.x 文档
-  
+  Ferron 1.x 文档
 
     
   </span>
@@ -1171,6 +1185,17 @@
               
               <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
                   <div class="md-sidebar__inner">
                     
 
@@ -1187,11 +1212,55 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#www-url-www-url" class="md-nav__link">
+  <a href="#url" class="md-nav__link">
     <span class="md-ellipsis">
+      <span class="md-typeset">
+        将整个站点重定向到另一个 URL
+      </span>
+    </span>
+  </a>
+  
+</li>
       
-        从不带“www.”的 URL 重定向到带“www.”的 URL
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        重定向并保留请求路径
+      </span>
+    </span>
+  </a>
+  
+</li>
       
+        <li class="md-nav__item">
+  <a href="#www-www" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        规范化主机重定向（非 www -&gt; www）
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#www-www_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        规范化主机重定向（www -&gt; 非 www）
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        注意事项与故障排查
+      </span>
     </span>
   </a>
   
@@ -1224,6 +1293,7 @@
     <li class="md-path__item">
       <a href="../.." class="md-path__link">
         
+  
   <span class="md-ellipsis">
     欢迎阅读文档！
   </span>
@@ -1239,9 +1309,25 @@
   
     
     
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
       <li class="md-path__item">
         <a href="../static-file-serving/" class="md-path__link">
           
+  
   <span class="md-ellipsis">
     常见用例
   </span>
@@ -1263,22 +1349,26 @@
   
 
 
-  <h1>重定向</h1>
+  <h1 id="__skip">重定向</h1>
 
-<p>如果要将整个网站重定向到另一个网站，可以使用此配置：</p>
+<p>Ferron 可以使用带有 <code>location</code> 属性的 <code>status</code> 来发起重定向。这对于域名迁移、规范化主机名以及临时维护路由非常有用。</p>
+<h2 id="url">将整个站点重定向到另一个 URL<a class="headerlink" href="#url" title="Permanent link">&para;</a></h2>
+<p>使用 <code>302</code> 进行临时重定向，或使用 <code>301</code> 进行永久重定向：</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>// 将网站重定向到另一个网站的示例配置。将“example.org”替换为您的域名。
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>example.org {
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    status 302 location=&quot;https://www.example.com&quot; // 将“www.example.com”替换为您想要的域。此外，如果需要永久重定向，请将 302 替换为 301。
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    status 302 location=&quot;https://www.example.com&quot; // 替换为您目标 URL；永久重定向请使用 301。
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>}
 </span></code></pre></div>
-<p>如果要将整个网站重定向到另一个网站并保留 URL，可以使用此配置：</p>
+<h2 id="_1">重定向并保留请求路径<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>如果您想保留原始请求路径：</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>// 将网站重定向到另一个网站的示例配置。将“example.org”替换为您的域名。
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>example.org {
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    status 302 location=&quot;https://www.example.com{path}&quot; // 将“www.example.com”替换为您想要的域。此外，如果需要永久重定向，请将 302 替换为 301。
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    status 302 location=&quot;https://www.example.com{path}&quot; // 替换为您目标主机；永久重定向请使用 301。
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>}
 </span></code></pre></div>
-<h3 id="www-url-www-url">从不带“www.”的 URL 重定向到带“www.”的 URL<a class="headerlink" href="#www-url-www-url" title="Permanent link">&para;</a></h3>
-<p>如果要将所有不带“www.”的 URL 请求重定向到带“www.”的 URL，可以使用此配置：</p>
+<p>例如，<code>example.org</code> 上的 <code>/docs/page</code> 会重定向到 <code>www.example.com</code> 上的 <code>/docs/page</code>。</p>
+<h2 id="www-www">规范化主机重定向（非 www -&gt; www）<a class="headerlink" href="#www-www" title="Permanent link">&para;</a></h2>
+<p>要将所有来自 <code>example.com</code> 的流量重定向到 <code>www.example.com</code>：</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>// 从不带“www.”的 URL 重定向到带“www.”的 URL 的示例配置。将“example.com”替换为您的域名。
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>example.com {
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    status 301 location=&quot;https://www.example.com{path}&quot;
@@ -1289,6 +1379,27 @@
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    root &quot;/var/www/example&quot;
 </span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>}
 </span></code></pre></div>
+<h2 id="www-www_1">规范化主机重定向（www -&gt; 非 www）<a class="headerlink" href="#www-www_1" title="Permanent link">&para;</a></h2>
+<p>如果您偏好以非 www 作为规范化主机：</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>// 从带“www.”的 URL 重定向到不带“www.”的 URL 的示例配置。将“example.com”替换为您的域名。
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>www.example.com {
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    status 301 location=&quot;https://example.com{path}&quot;
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>}
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>example.com {
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    // 对于此示例，让我们提供静态文件
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    root &quot;/var/www/example&quot;
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>}
+</span></code></pre></div>
+<h2 id="_2">注意事项与故障排查<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li>如果在修改配置后浏览器仍使用旧的重定向，请清除浏览器缓存或使用隐私窗口测试；<code>301</code> 响应会被激进地缓存。</li>
+<li>测试时请使用 <code>302</code>，只有在确认重定向为最终状态后才切换到 <code>301</code>。</li>
+<li>如果发生重定向链，请确认每个请求只应用一条主机/协议规范化规则。</li>
+<li>有关自动 <code>www</code> 重定向，请参阅 <a href="/docs/configuration/routing-url-processing">配置：路由与 URL 处理</a> 中的 <code>wwwredirect</code>。</li>
+<li>有关 URL 重写（内部路径转换），请参阅 <a href="/docs/use-cases/url-rewriting">URL 重写</a>。</li>
+<li>有关 <code>status</code> 指令及其属性的参考，请参阅 <a href="/docs/configuration/security-tls">配置：安全与 TLS</a>。</li>
+</ul>
 
 
 
@@ -1396,11 +1507,10 @@
     
       
       
-      
-      <script id="__config" type="application/json">{"annotate":null,"base":"../..","features":["announce.dismiss","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.expand","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight"],"search":"../../assets/javascripts/workers/search.e2d2d235.min.js","tags":null,"translations":{"clipboard.copied":"已复制","clipboard.copy":"复制","search.result.more.one":"在该页上还有 1 个符合条件的结果","search.result.more.other":"在该页上还有 # 个符合条件的结果","search.result.none":"没有找到符合条件的结果","search.result.one":"找到 1 个符合条件的结果","search.result.other":"# 个符合条件的结果","search.result.placeholder":"键入以开始搜索","search.result.term.missing":"缺少","select.version":"选择当前版本"},"version":null}</script>
+      <script id="__config" type="application/json">{"annotate":null,"base":"../..","features":["announce.dismiss","content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.expand","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight"],"search":"../../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"已复制","clipboard.copy":"复制","search.result.more.one":"在该页上还有 1 个符合条件的结果","search.result.more.other":"在该页上还有 # 个符合条件的结果","search.result.none":"没有找到符合条件的结果","search.result.one":"找到 1 个符合条件的结果","search.result.other":"# 个符合条件的结果","search.result.placeholder":"键入以开始搜索","search.result.term.missing":"缺少","select.version":"选择当前版本"},"version":null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.8ffeb9c9.min.js"></script>
+      <script src="../../assets/javascripts/bundle.69c251d7.min.js"></script>
       
     
   </body>
